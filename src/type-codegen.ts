@@ -1,5 +1,10 @@
 import * as t from "io-ts-codegen";
-import { ArraySchema, JSONSchema, ObjectSchema } from "./json-schema";
+import {
+  ArraySchema,
+  JSONSchema,
+  ObjectSchema,
+  OneOfSchema,
+} from "./json-schema";
 
 function toInterfaceCombinator(schema: ObjectSchema): t.InterfaceCombinator {
   const combinator = t.typeCombinator(
@@ -25,21 +30,26 @@ function toArrayCombinator(
 }
 
 export function toTypeReference(schema: JSONSchema): t.TypeReference {
-  switch (schema.type) {
-    case "string":
-      return schema.enum ? t.keyofCombinator(schema.enum) : t.stringType;
-    case "number":
-      return t.numberType;
-    case "integer":
-      return t.numberType;
-    case "boolean":
-      return t.booleanType;
-    case "object":
-      return toInterfaceCombinator(schema);
-    case "null":
-      return t.nullType;
-    case "array":
-      return toArrayCombinator(schema);
+  if (OneOfSchema.is(schema)) {
+    const typeRefs = schema.oneOf.map(toTypeReference);
+    return t.unionCombinator(typeRefs);
+  } else {
+    switch (schema.type) {
+      case "string":
+        return schema.enum ? t.keyofCombinator(schema.enum) : t.stringType;
+      case "number":
+        return t.numberType;
+      case "integer":
+        return t.numberType;
+      case "boolean":
+        return t.booleanType;
+      case "object":
+        return toInterfaceCombinator(schema);
+      case "null":
+        return t.nullType;
+      case "array":
+        return toArrayCombinator(schema);
+    }
   }
 }
 

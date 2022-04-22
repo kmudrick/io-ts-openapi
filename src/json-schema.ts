@@ -93,11 +93,22 @@ export const ArraySchema: t.Type<ArraySchema> = t.recursion(
         type: t.literal("array"),
       }),
       t.partial({
-        tems: t.array(JSONSchema),
+        items: JSONSchema,
         minItems: t.number,
         maxItems: t.number,
       }),
     ])
+);
+
+export interface OneOfSchema {
+  // todo support type
+  oneOf: Array<JSONSchema>;
+}
+
+export const OneOfSchema: t.Type<OneOfSchema> = t.recursion("OneOfSchema", () =>
+  t.type({
+    oneOf: t.array(JSONSchema),
+  })
 );
 
 export type JSONSchema =
@@ -107,7 +118,8 @@ export type JSONSchema =
   | BooleanSchema
   | NullSchema
   | ObjectSchema
-  | ArraySchema;
+  | ArraySchema
+  | OneOfSchema;
 
 export const JSONSchema: t.Type<JSONSchema> = t.recursion("JSONSchema", () =>
   t.union([
@@ -118,5 +130,6 @@ export const JSONSchema: t.Type<JSONSchema> = t.recursion("JSONSchema", () =>
     NullSchema,
     ObjectSchema,
     ArraySchema,
+    OneOfSchema,
   ])
 );

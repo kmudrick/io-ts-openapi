@@ -81,6 +81,10 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
+    SampleUnion:
+      oneOf:
+        - $ref: "#/components/schemas/Error"
+        - $ref: "#/components/schemas/Pet"
     Pet:
       type: object
       required:
