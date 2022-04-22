@@ -1,0 +1,35 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "plugins": ["@typescript-eslint"],
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "no-else-return": "off",
+        "default-case": "off",
+        "consistent-return": "off",
+        "import/prefer-default-export": "off",
+        "@typescript-eslint/no-redeclare": "off",
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "off"
+      }
+    }
+  ]
+}

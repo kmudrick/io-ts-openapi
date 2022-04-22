@@ -1,9 +1,9 @@
-import { parseFile } from "./parser";
-import { JSONSchema } from "./json-schema";
-import { isRight } from "fp-ts/lib/Either";
-import { toDeclarations, getRuntime, getStatic } from "./type-codegen";
 import fs from "fs/promises";
 import path from "path";
+import { isRight } from "fp-ts/lib/Either";
+import { parseFile } from "./parser";
+import { JSONSchema } from "./json-schema";
+import { toDeclarations, getRuntime, getStatic } from "./type-codegen";
 
 export async function runProgram(
   inputFile: string,
