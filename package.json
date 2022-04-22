@@ -1,9 +1,23 @@
 {
   "name": "@kmudrick/io-ts-openapi",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "type": "commonjs",
+  "files": [
+    "bin",
+    "dist",
+    "src"
+  ],
   "bin": {
-    "io-ts-openapi": "./bin/index.ts"
+    "io-ts-openapi": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc && chmod +x ./dist/index.js",
+    "format": "npm run prettier -w .",
+    "lint": "eslint .",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
