@@ -153,21 +153,21 @@ for the models `Pet`, `Pets`, and `Error`
 
 ```typescript
 import * as t from "io-ts";
-interface Pet {
+export interface Pet {
   id?: number;
   name?: string;
   tag: string;
 }
-type Pets = Array<{
+export type Pets = Array<{
   id?: number;
   name?: string;
   tag: string;
 }>;
-interface Error {
+export interface Error {
   code?: number;
   message?: string;
 }
-const Pet = t.intersection([
+export const Pet = t.intersection([
   t.type({
     tag: t.string,
   }),
@@ -176,7 +176,7 @@ const Pet = t.intersection([
     name: t.string,
   }),
 ]);
-const Pets = t.array(
+export const Pets = t.array(
   t.intersection([
     t.type({
       tag: t.string,
@@ -187,7 +187,7 @@ const Pets = t.array(
     }),
   ])
 );
-const Error = t.partial({
+export const Error = t.partial({
   code: t.number,
   message: t.string,
 });
