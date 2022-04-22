@@ -1,6 +1,6 @@
-# io-ts-openapi
+# @kmudrick/io-ts-openapi
 
-> Generates typescript io-ts codecs from the models of an OpenAPI Spec
+Generates typescript io-ts codecs from the models of an OpenAPI Spec
 
 ## Background
 
