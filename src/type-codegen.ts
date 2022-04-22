@@ -45,6 +45,8 @@ export function toTypeReference(schema: JSONSchema): t.TypeReference {
 
 type Declarations = Array<t.TypeDeclaration | t.CustomTypeDeclaration>;
 
+const isExported = true;
+
 export function toDeclarations(
   references: Record<string, JSONSchema>
 ): Declarations {
@@ -59,7 +61,7 @@ export function toDeclarations(
           `Type reference for ${JSON.stringify(schema)} is undefined`
         );
       }
-      const declaration = t.typeDeclaration(name, typeReference);
+      const declaration = t.typeDeclaration(name, typeReference, isExported);
       return [...acc, declaration];
     },
     start
