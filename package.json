@@ -18,7 +18,7 @@
     "format": "npm run prettier -w .",
     "lint": "eslint .",
     "prepare": "npm run build",
-    "version": "npm run build && git add -A dist",
+    "version": "npm run build",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {

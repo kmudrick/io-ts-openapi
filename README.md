@@ -1,6 +1,14 @@
 # io-ts-openapi
 
-> Generates io-ts codecs from the models of an OpenAPI Spec
+> Generates typescript io-ts codecs from the models of an OpenAPI Spec
+
+## Background
+
+[io-ts](https://github.com/gcanti/io-ts/blob/master/index.md) is a fantastic Typescript library that uses **_parser combinators_** for building static types and typed runtime codecs that can be used for validation (type guards), encoding, and decoding.
+
+This project uses [io-ts-codegen](https://gcanti.github.io/io-ts-codegen/) to generate these types and codecs from the models of an openapi document.
+
+Future enhancements will target support for refined types and alternate implementations (like Js-Joda for Date/Time types).
 
 ## Usage
 
