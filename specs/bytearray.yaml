@@ -1,0 +1,10 @@
+components:
+  schemas:
+    ByteArray:
+      required:
+        - data
+      type: "object"
+      properties:
+        data:
+          type: "string"
+          format: "binary"

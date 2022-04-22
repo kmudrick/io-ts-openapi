@@ -17,6 +17,7 @@ export const StringSchema = t.intersection([
       time: null,
       "date-time": null,
       duration: null,
+      binary: null,
     }),
   }),
 ]);

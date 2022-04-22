@@ -68,7 +68,11 @@ export function toDeclarations(
       if (typeReference === undefined) {
         // todo change signature to return Try<Declarations>
         throw new Error(
-          `Type reference for ${JSON.stringify(schema)} is undefined`
+          `Type reference for ${JSON.stringify(
+            schema,
+            undefined,
+            2
+          )} is undefined`
         );
       }
       const declaration = t.typeDeclaration(name, typeReference, isExported);

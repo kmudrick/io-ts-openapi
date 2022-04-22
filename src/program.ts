@@ -23,7 +23,11 @@ export async function runProgram(
             // todo change signature to carry the error in the return
             // eslint-disable-next-line no-console
             console.error(
-              `Could not decode ${name}: ${JSON.stringify(errors)}`
+              `Could not decode ${name}: ${JSON.stringify(
+                errors,
+                undefined,
+                2
+              )}`
             );
             return acc;
           },
