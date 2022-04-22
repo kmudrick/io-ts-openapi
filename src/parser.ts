@@ -10,6 +10,7 @@ type UnparsedSchemas = {
 
 // from { components: { schemas: { Foo: {} } } }
 // to   { definitions: { Foo: {} } }
+// while replacing refs
 function componentsToDefinitions(json: any): any {
   if (typeof json !== "object") {
     return json;
@@ -52,12 +53,11 @@ function componentsToDefinitions(json: any): any {
 export async function parseFile(file: string): Promise<UnparsedSchemas> {
   const contents = await fs.readFile(file, "utf8");
   const yaml = YAML.parse(contents); // handles yaml or json
-  const converted = componentsToDefinitions(yaml);
+  const converted = componentsToDefinitions(yaml); // to deref we need Json Schema (not openapi)
   const dereferenced = await $RefParser.dereference(converted);
-  return Object.entries(dereferenced.definitions ?? {}).map(
-    ([name, content]) => ({
-      name,
-      content,
-    })
-  );
+  const definitions = dereferenced.definitions ?? {}; // todo consider making no defs a failure
+  return Object.entries(definitions).map(([name, content]) => ({
+    name,
+    content,
+  }));
 }

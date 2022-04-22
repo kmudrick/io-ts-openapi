@@ -13,6 +13,8 @@ const parser = yargs(hideBin(process.argv)).options({
   await runProgram(input, output);
   return output;
 })().then(
+  // eslint-disable-next-line no-console
   (fileWritten) => console.log(`Successfully wrote ${fileWritten}`),
+  // eslint-disable-next-line no-console
   (err) => console.error("Unsuccessful", err)
 );

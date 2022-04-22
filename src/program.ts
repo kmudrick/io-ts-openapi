@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
-import { isRight } from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
+import { fold as eFold } from "fp-ts/lib/Either";
 import { parseFile } from "./parser";
 import { JSONSchema } from "./json-schema";
 import { toDeclarations, getRuntime, getStatic } from "./type-codegen";
@@ -15,19 +16,26 @@ export async function runProgram(
     (acc, entry) => {
       const { name, content } = entry;
       const decoded = JSONSchema.decode(content);
-      if (isRight(decoded)) {
-        const schema = decoded.right;
-        return { ...acc, [name]: schema };
-      } else {
-        console.error(
-          `Could not decode ${name}: ${JSON.stringify(decoded.left)}`
-        );
-        return acc;
-      }
+      return pipe(
+        decoded,
+        eFold(
+          (errors) => {
+            // todo change signature to carry the error in the return
+            // eslint-disable-next-line no-console
+            console.error(
+              `Could not decode ${name}: ${JSON.stringify(errors)}`
+            );
+            return acc;
+          },
+          (schema) => ({ ...acc, [name]: schema })
+        )
+      );
     },
     {}
   );
+
   const declarations = toDeclarations(parsed);
+
   const runtimeContents = getRuntime(declarations);
   const staticContents = getStatic(declarations);
   const ioTsImport = 'import * as t from "io-ts";';
