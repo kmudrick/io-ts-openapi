@@ -2,6 +2,7 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./src",
+    "rootDir": "./src",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,5 +15,5 @@
     "target": "ESNext",
     "useDefineForClassFields": true
   },
-  "include": ["src"]
+  "include": ["./src"]
 }
