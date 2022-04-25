@@ -6,17 +6,26 @@ import {
   OneOfSchema,
 } from "./json-schema";
 
-function toInterfaceCombinator(schema: ObjectSchema): t.InterfaceCombinator {
-  const combinator = t.typeCombinator(
-    Object.keys(schema.properties).map((key) =>
-      t.property(
-        key,
-        toTypeReference(schema.properties[key]),
-        schema.required?.includes(key) ?? false
+type ObjectCombinator = t.InterfaceCombinator | t.DictionaryCombinator;
+
+function toObjectCombinator(schema: ObjectSchema): ObjectCombinator {
+  const properties = schema.properties ?? {};
+  if (schema.additionalProperties !== undefined) {
+    return t.recordCombinator(
+      t.stringType,
+      toTypeReference(schema.additionalProperties)
+    );
+  } else {
+    return t.typeCombinator(
+      Object.keys(properties).map((key) =>
+        t.property(
+          key,
+          toTypeReference(properties[key]),
+          schema.required?.includes(key) ?? false
+        )
       )
-    )
-  );
-  return combinator;
+    );
+  }
 }
 
 function toArrayCombinator(
@@ -44,7 +53,7 @@ export function toTypeReference(schema: JSONSchema): t.TypeReference {
       case "boolean":
         return t.booleanType;
       case "object":
-        return toInterfaceCombinator(schema);
+        return toObjectCombinator(schema);
       case "null":
         return t.nullType;
       case "array":

@@ -55,12 +55,13 @@ export const NullSchema = t.type({
 });
 export type NullSchema = t.TypeOf<typeof NullSchema>;
 
-// todo additionalProperties, patternProperties, unevaluatedProperties, propertyNames,
+// todo patternProperties, unevaluatedProperties, propertyNames,
 // minProperties, maxProperties
 export interface ObjectSchema {
   type: "object";
-  properties: { [key: string]: JSONSchema }; // fixme
+  properties?: { [key: string]: JSONSchema }; // fixme
   required?: Array<string>;
+  additionalProperties?: JSONSchema;
 }
 
 export const ObjectSchema: t.Type<ObjectSchema> = t.recursion(
@@ -69,10 +70,11 @@ export const ObjectSchema: t.Type<ObjectSchema> = t.recursion(
     t.intersection([
       t.type({
         type: t.literal("object"),
-        properties: t.record(t.string, JSONSchema),
       }),
       t.partial({
         required: t.array(t.string),
+        properties: t.record(t.string, JSONSchema),
+        additionalProperties: JSONSchema,
       }),
     ])
 );
@@ -86,20 +88,20 @@ export interface ArraySchema {
   maxItems?: number;
 }
 
-export const ArraySchema: t.Type<ArraySchema> = t.recursion(
-  "ObjectSchema",
-  () =>
-    t.intersection([
-      t.type({
-        type: t.literal("array"),
-      }),
-      t.partial({
-        items: JSONSchema,
-        minItems: t.number,
-        maxItems: t.number,
-      }),
-    ])
+export const ArraySchema: t.Type<ArraySchema> = t.recursion("ArraySchema", () =>
+  t.intersection([
+    t.type({
+      type: t.literal("array"),
+    }),
+    t.partial({
+      items: JSONSchema,
+      minItems: t.number,
+      maxItems: t.number,
+    }),
+  ])
 );
+
+// type AdditionalProperties = JSONSchema | boolean;
 
 export interface OneOfSchema {
   // todo support type
