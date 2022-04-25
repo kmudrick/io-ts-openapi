@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { pipe } from "fp-ts/lib/function";
 import { fold as eFold } from "fp-ts/lib/Either";
+import { formatValidationErrors } from "io-ts-reporters";
 import { parseFile } from "./parser";
 import { JSONSchema } from "./json-schema";
 import { toDeclarations, getRuntime, getStatic } from "./type-codegen";
@@ -11,7 +12,6 @@ export async function runProgram(
   outputFile: string
 ): Promise<void> {
   const unparsedSchemas = await parseFile(inputFile);
-
   const parsed: Record<string, JSONSchema> = unparsedSchemas.reduce(
     (acc, entry) => {
       const { name, content } = entry;
@@ -20,16 +20,13 @@ export async function runProgram(
         decoded,
         eFold(
           (errors) => {
+            const result = {
+              name,
+              errors: formatValidationErrors(errors),
+            };
+            const reason = JSON.stringify(result, undefined, 2);
             // todo change signature to carry the error in the return
-            // eslint-disable-next-line no-console
-            console.error(
-              `Could not decode ${name}: ${JSON.stringify(
-                errors,
-                undefined,
-                2
-              )}`
-            );
-            return acc;
+            throw new Error(`Could not decode ${name}: ${reason}`);
           },
           (schema) => ({ ...acc, [name]: schema })
         )
