@@ -17,13 +17,11 @@ function toObjectCombinator(schema: ObjectSchema): ObjectCombinator {
     );
   } else {
     return t.typeCombinator(
-      Object.keys(properties).map((key) =>
-        t.property(
-          key,
-          toTypeReference(properties[key]),
-          schema.required?.includes(key) ?? false
-        )
-      )
+      Object.keys(properties).map((key) => {
+        const isOptional = !(schema.required?.includes(key) ?? false);
+        const type = toTypeReference(properties[key]);
+        return t.property(key, type, isOptional);
+      })
     );
   }
 }
@@ -65,6 +63,7 @@ export function toTypeReference(schema: JSONSchema): t.TypeReference {
 type Declarations = Array<t.TypeDeclaration | t.CustomTypeDeclaration>;
 
 const isExported = true;
+const isReadonly = true;
 
 export function toDeclarations(
   references: Record<string, JSONSchema>
@@ -84,7 +83,12 @@ export function toDeclarations(
           )} is undefined`
         );
       }
-      const declaration = t.typeDeclaration(name, typeReference, isExported);
+      const declaration = t.typeDeclaration(
+        name,
+        typeReference,
+        isExported,
+        isReadonly
+      );
       return [...acc, declaration];
     },
     start
