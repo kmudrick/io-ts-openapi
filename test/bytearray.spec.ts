@@ -33,7 +33,9 @@ const ByteArrayValue = {
 
 describe("ByteArray", () => {
   test("Decoding", async () => {
-    const dereferenced = await $RefParser.dereference(ByteArray);
+    const dereferenced = await $RefParser.dereference(
+      ByteArray as $RefParser.JSONSchema
+    );
     const result = JSONSchema.decode(dereferenced);
     if (E.isLeft(result)) {
       const errors = formatValidationErrors(result.left);
@@ -44,7 +46,9 @@ describe("ByteArray", () => {
 
 describe("ByteArrayValue", () => {
   test("Decoding", async () => {
-    const dereferenced = await $RefParser.dereference(ByteArrayValue);
+    const dereferenced = await $RefParser.dereference(
+      ByteArrayValue as $RefParser.JSONSchema
+    );
     const result = JSONSchema.decode(dereferenced);
     if (E.isLeft(result)) {
       const errors = formatValidationErrors(result.left);

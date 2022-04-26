@@ -5,8 +5,8 @@
   "repository": {
     "url": "https://github.com/kmudrick/io-ts-openapi"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/index.js",
   "type": "commonjs",
   "files": [
     "bin",
@@ -14,11 +14,11 @@
     "src"
   ],
   "bin": {
-    "io-ts-openapi": "./dist/index.js"
+    "io-ts-openapi": "./dist/src/index.js"
   },
   "scripts": {
     "test": "jest",
-    "build": "rm -rf dist && tsc && chmod +x ./dist/index.js",
+    "build": "rm -rf dist && tsc && chmod +x ./dist/src/index.js",
     "format": "prettier -w .",
     "lint": "eslint ./src/**/*",
     "prepare": "npm run build && npm run lint && npm run test",

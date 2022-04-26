@@ -3,7 +3,7 @@ import { formatValidationErrors } from "io-ts-reporters";
 import * as E from "fp-ts/Either";
 import { JSONSchema } from "../src/json-schema";
 
-const StringValue: unknown = {
+const StringValue = {
   required: ["value"],
   type: "object",
   properties: {
@@ -19,7 +19,7 @@ const StringValue: unknown = {
   },
 };
 
-const BooleanValue: unknown = {
+const BooleanValue = {
   required: ["value"],
   type: "object",
   properties: {
@@ -35,7 +35,7 @@ const BooleanValue: unknown = {
   },
 };
 
-const ByteArrayValue: unknown = {
+const ByteArrayValue = {
   required: ["value"],
   type: "object",
   properties: {
@@ -52,7 +52,7 @@ const ByteArrayValue: unknown = {
   },
 };
 
-const AmountValue: unknown = {
+const AmountValue = {
   required: ["value"],
   type: "object",
   properties: {
@@ -68,18 +68,20 @@ const AmountValue: unknown = {
   },
 };
 
-const FieldValue: unknown = {
+const FieldValue = {
   oneOf: [StringValue, ByteArrayValue, BooleanValue, AmountValue],
 };
 
-const FieldValueMap: unknown = {
+const FieldValueMap = {
   type: "object",
   additionalProperties: FieldValue,
 };
 
 describe("oneOf Support - FieldValueMap", () => {
   test("Decoding", async () => {
-    const dereferenced = await $RefParser.dereference(FieldValueMap);
+    const dereferenced = await $RefParser.dereference(
+      FieldValueMap as $RefParser.JSONSchema
+    );
     const result = JSONSchema.decode(dereferenced);
     if (E.isLeft(result)) {
       const errors = formatValidationErrors(result.left);
