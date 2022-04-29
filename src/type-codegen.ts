@@ -5,21 +5,25 @@ import {
   ObjectSchema,
   OneOfSchema,
 } from "./json-schema";
+import { LocalDateCombinator, LocalDateTimeCombinator } from "./types";
 
 type ObjectCombinator = t.InterfaceCombinator | t.DictionaryCombinator;
 
-function toObjectCombinator(schema: ObjectSchema): ObjectCombinator {
+function toObjectCombinator(
+  schema: ObjectSchema,
+  config: DeclarationConfig
+): ObjectCombinator {
   const properties = schema.properties ?? {};
   if (schema.additionalProperties !== undefined) {
     return t.recordCombinator(
       t.stringType,
-      toTypeReference(schema.additionalProperties)
+      toTypeReference(schema.additionalProperties, config)
     );
   } else {
     return t.typeCombinator(
       Object.keys(properties).map((key) => {
         const isOptional = !(schema.required?.includes(key) ?? false);
-        const type = toTypeReference(properties[key]);
+        const type = toTypeReference(properties[key], config);
         return t.property(key, type, isOptional);
       })
     );
@@ -27,23 +31,35 @@ function toObjectCombinator(schema: ObjectSchema): ObjectCombinator {
 }
 
 function toArrayCombinator(
-  schema: ArraySchema
+  schema: ArraySchema,
+  config: DeclarationConfig
 ): t.UnknownArrayType | t.ArrayCombinator {
   if (schema.items === undefined) {
     return t.unknownArrayType;
   } else {
-    return t.arrayCombinator(toTypeReference(schema.items));
+    return t.arrayCombinator(toTypeReference(schema.items, config));
   }
 }
 
-export function toTypeReference(schema: JSONSchema): t.TypeReference {
+export function toTypeReference(
+  schema: JSONSchema,
+  config: DeclarationConfig
+): t.TypeReference {
   if (OneOfSchema.is(schema)) {
-    const typeRefs = schema.oneOf.map(toTypeReference);
+    const typeRefs = schema.oneOf.map((s) => toTypeReference(s, config));
     return t.unionCombinator(typeRefs);
   } else {
     switch (schema.type) {
       case "string":
-        return schema.enum ? t.keyofCombinator(schema.enum) : t.stringType;
+        if (schema.enum !== undefined) {
+          return t.keyofCombinator(schema.enum);
+        } else if (schema.format === "date" && config.useJoda) {
+          return LocalDateCombinator;
+        } else if (schema.format === "date-time" && config.useJoda) {
+          return LocalDateTimeCombinator;
+        } else {
+          return t.stringType;
+        }
       case "number":
         return t.numberType;
       case "integer":
@@ -51,11 +67,11 @@ export function toTypeReference(schema: JSONSchema): t.TypeReference {
       case "boolean":
         return t.booleanType;
       case "object":
-        return toObjectCombinator(schema);
+        return toObjectCombinator(schema, config);
       case "null":
         return t.nullType;
       case "array":
-        return toArrayCombinator(schema);
+        return toArrayCombinator(schema, config);
     }
   }
 }
@@ -65,14 +81,19 @@ type Declarations = Array<t.TypeDeclaration | t.CustomTypeDeclaration>;
 const isExported = true;
 const isReadonly = true;
 
+export interface DeclarationConfig {
+  useJoda: boolean;
+}
+
 export function toDeclarations(
-  references: Record<string, JSONSchema>
+  references: Record<string, JSONSchema>,
+  config: DeclarationConfig
 ): Declarations {
   const start: t.TypeDeclaration[] = [];
   const declarations: t.TypeDeclaration[] = Object.entries(references).reduce(
     (acc, entry) => {
       const [name, schema] = entry;
-      const typeReference = toTypeReference(schema);
+      const typeReference = toTypeReference(schema, config);
       if (typeReference === undefined) {
         // todo change signature to return Try<Declarations>
         throw new Error(

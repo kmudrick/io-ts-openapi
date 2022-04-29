@@ -24,7 +24,10 @@ const AmountValue: unknown = {
 test("Handle Mapping Required Fields mapping", () => {
   const result = JSONSchema.decode(AmountValue);
   if (E.isRight(result)) {
-    const declarations = toDeclarations({ AmountValue: result.right });
+    const declarations = toDeclarations(
+      { AmountValue: result.right },
+      { useJoda: false }
+    );
     const expectations = [
       {
         kind: "TypeDeclaration",

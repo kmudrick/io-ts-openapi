@@ -9,7 +9,8 @@ import { toDeclarations, getRuntime, getStatic } from "./type-codegen";
 
 export async function runProgram(
   inputFile: string,
-  outputFile: string
+  outputFile: string,
+  useJoda: boolean
 ): Promise<void> {
   const unparsedSchemas = await parseFile(inputFile);
   const parsed: Record<string, JSONSchema> = unparsedSchemas.reduce(
@@ -35,13 +36,24 @@ export async function runProgram(
     {}
   );
 
-  const declarations = toDeclarations(parsed);
+  const config = {
+    useJoda,
+  };
+
+  const declarations = toDeclarations(parsed, config);
 
   const runtimeContents = getRuntime(declarations);
   const staticContents = getStatic(declarations);
   const ioTsImport = 'import * as t from "io-ts";';
+  const jodaImports = [
+    'import { LocalDate, LocalDateTime } from "@js-joda/core";',
+    'import { LocalDateFromISOString, LocalDateTimeFromISOString } from "@kmudrick/io-ts-openapi/dist/src/types";',
+  ];
+  const extra = useJoda ? jodaImports : [];
 
-  const contents = [ioTsImport, staticContents, runtimeContents].join("\n");
+  const contents = [ioTsImport, ...extra, staticContents, runtimeContents].join(
+    "\n"
+  );
 
   await fs.mkdir(path.dirname(outputFile), { recursive: true });
   await fs.writeFile(outputFile, contents, "utf8");
