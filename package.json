@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@js-joda/core": "^5.2.0",
     "assert": "^2.0.0",
     "fp-ts": "^2.11.10",
     "io-ts": "^2.2.16",

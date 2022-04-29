@@ -20,7 +20,10 @@ Options:
   --version  Show version number                              [boolean]
   --input                                           [string] [required]
   --output                                          [string] [required]
+  --useJoda                                           [boolean] [default: false]
 ```
+
+## Example
 
 For example, to read [`specs/petstore.yaml`](./specs/petstore.yaml) and write the types and codecs to `petstore.ts`:
 
@@ -153,42 +156,119 @@ for the models `Pet`, `Pets`, and `Error`
 
 ```typescript
 import * as t from "io-ts";
-export interface Pet {
-  id?: number;
-  name?: string;
-  tag: string;
-}
-export type Pets = Array<{
-  id?: number;
-  name?: string;
-  tag: string;
+export type SampleUnion = Readonly<
+  | {
+      code: number;
+      message: string;
+    }
+  | {
+      id: number;
+      name: string;
+      tag?: string;
+    }
+>;
+export type Pet = Readonly<{
+  id: number;
+  name: string;
+  tag?: string;
 }>;
-export interface Error {
-  code?: number;
-  message?: string;
-}
-export const Pet = t.intersection([
-  t.type({
-    tag: t.string,
-  }),
-  t.partial({
-    id: t.number,
-    name: t.string,
-  }),
-]);
-export const Pets = t.array(
+export type Pets = Readonly<
+  Array<{
+    id: number;
+    name: string;
+    tag?: string;
+  }>
+>;
+export type Error = Readonly<{
+  code: number;
+  message: string;
+}>;
+export const SampleUnion = t.readonly(
+  t.union([
+    t.type({
+      code: t.number,
+      message: t.string,
+    }),
+    t.intersection([
+      t.type({
+        id: t.number,
+        name: t.string,
+      }),
+      t.partial({
+        tag: t.string,
+      }),
+    ]),
+  ]),
+  "SampleUnion"
+);
+export const Pet = t.readonly(
   t.intersection([
     t.type({
-      tag: t.string,
-    }),
-    t.partial({
       id: t.number,
       name: t.string,
     }),
-  ])
+    t.partial({
+      tag: t.string,
+    }),
+  ]),
+  "Pet"
 );
-export const Error = t.partial({
-  code: t.number,
-  message: t.string,
-});
+export const Pets = t.readonly(
+  t.array(
+    t.intersection([
+      t.type({
+        id: t.number,
+        name: t.string,
+      }),
+      t.partial({
+        tag: t.string,
+      }),
+    ])
+  ),
+  "Pets"
+);
+export const Error = t.readonly(
+  t.type({
+    code: t.number,
+    message: t.string,
+  }),
+  "Error"
+);
 ```
+
+## JS Joda Support
+
+[js-joda](https://js-joda.github.io/js-joda/) is an excellent immutable date/time library for JS.
+
+To enable `date` strings to use `LocalDate` and `date-time` strings to use `LocalDateTime`,
+simply use the ``--useJoda` switch.
+
+A model that looks like:
+
+```yaml
+LocalDateValue:
+  type: object
+  required:
+    - value
+  properties:
+    value:
+      type: string
+      format: date
+```
+
+Will produce:
+
+```
+import * as t from "io-ts";
+import { LocalDate } from "@js-joda/core";
+import { LocalDateFromISOString } from "@kmudrick/io-ts-openapi/dist/src/types";
+
+export type LocalDateValue = Readonly<{
+  value: LocalDate
+}>
+export const LocalDateValue = t.readonly(t.type({
+  value: LocalDateFromISOString
+}), 'LocalDateValue')
+```
+
+The source for `LocalDateFromISOString` can be found [here](./src/types.ts)

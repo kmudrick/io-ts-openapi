@@ -1,6 +1,22 @@
 openapi: "3.0.0"
 components:
   schemas:
+    LocalDateValue:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          format: date
+    LocalDateTimeValue:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          format: date-time
     StringValue:
       type: object
       required:
@@ -39,6 +55,8 @@ components:
           $ref: "#/components/schemas/ByteArray"
     FieldValue:
       oneOf:
+        - $ref: "#/components/schemas/LocalDateValue"
+        - $ref: "#/components/schemas/LocalDateTimeValue"
         - $ref: "#/components/schemas/StringValue"
         - $ref: "#/components/schemas/BooleanValue"
         - $ref: "#/components/schemas/AmountValue"
