@@ -1,0 +1,119 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: sample api
+paths:
+  /all:
+    get:
+      description: Returns all
+      operationId: "getAll"
+      responses:
+        "200":
+          description: Success
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/All"
+components:
+  schemas:
+    All:
+      type: object
+      properties:
+        name:
+          type: string
+        fieldMap:
+          $ref: "#/components/schemas/ValueWrapperMap"
+    LocalDateValue:
+      type: object
+      required:
+        - LocalDateValue
+      properties:
+        LocalDateValue:
+          type: object
+          required:
+            - value
+          properties:
+            value:
+              type: string
+              format: date
+    LocalDateTimeValue:
+      type: object
+      required:
+        - LocalDateTimeValue
+      properties:
+        LocalDateTimeValue:
+          type: object
+          required:
+            - value
+          properties:
+            value:
+              type: string
+              format: date-time
+    StringValue:
+      type: object
+      required:
+        - StringValue
+      properties:
+        StringValue:
+          type: object
+          required:
+            - value
+          properties:
+            value:
+              type: string
+    BooleanValue:
+      type: object
+      required:
+        - BooleanValue
+      properties:
+        BooleanValue:
+          type: object
+          required:
+            - value
+          properties:
+            value:
+              type: boolean
+    AmountValue:
+      type: object
+      required:
+        - AmountValue
+      properties:
+        AmountValue:
+          type: object
+          required:
+            - value
+          properties:
+            value:
+              type: number
+    ByteArray:
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          type: string
+          format: binary
+    ByteArrayValue:
+      type: object
+      required:
+        - ByteArrayValue
+      properties:
+        ByteArrayValue:
+          type: object
+          required:
+            - value
+          properties:
+            value:
+              $ref: "#/components/schemas/ByteArray"
+    ValueWrapper:
+      oneOf:
+        - $ref: "#/components/schemas/LocalDateValue"
+        - $ref: "#/components/schemas/LocalDateTimeValue"
+        - $ref: "#/components/schemas/StringValue"
+        - $ref: "#/components/schemas/BooleanValue"
+        - $ref: "#/components/schemas/AmountValue"
+        - $ref: "#/components/schemas/ByteArrayValue"
+    ValueWrapperMap:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/ValueWrapper"
