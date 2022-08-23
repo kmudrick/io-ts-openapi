@@ -58,7 +58,7 @@ export type NullSchema = t.TypeOf<typeof NullSchema>;
 // todo patternProperties, unevaluatedProperties, propertyNames,
 // minProperties, maxProperties
 export interface ObjectSchema {
-  type: "object";
+  type?: "object";
   properties?: { [key: string]: JSONSchema }; // fixme
   required?: Array<string>;
   additionalProperties?: JSONSchema;
@@ -67,16 +67,11 @@ export interface ObjectSchema {
 export const ObjectSchema: t.Type<ObjectSchema> = t.recursion(
   "ObjectSchema",
   () =>
-    t.intersection([
-      t.type({
-        type: t.literal("object"),
-      }),
-      t.partial({
-        required: t.array(t.string),
-        properties: t.record(t.string, JSONSchema),
-        additionalProperties: JSONSchema,
-      }),
-    ])
+    t.partial({
+      required: t.array(t.string),
+      properties: t.record(t.string, JSONSchema),
+      additionalProperties: JSONSchema,
+    })
 );
 
 // todo prefixItems (which makes items be allowed to be a boolean),

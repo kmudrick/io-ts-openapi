@@ -66,6 +66,8 @@ export function toTypeReference(
         return t.numberType;
       case "boolean":
         return t.booleanType;
+      case undefined:
+        return toObjectCombinator(schema, config);
       case "object":
         return toObjectCombinator(schema, config);
       case "null":
