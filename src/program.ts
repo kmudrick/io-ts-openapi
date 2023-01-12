@@ -3,16 +3,18 @@ import path from "path";
 import { pipe } from "fp-ts/lib/function";
 import { fold as eFold } from "fp-ts/lib/Either";
 import { formatValidationErrors } from "io-ts-reporters";
-import { parseFile } from "./parser";
+import { parseFile, parseModelFile } from "./parser";
 import { JSONSchema } from "./json-schema";
 import { toDeclarations, getRuntime, getStatic } from "./type-codegen";
 
 export async function runProgram(
   inputFile: string,
   outputFile: string,
-  useJoda: boolean
+  useJoda: boolean,
+  isModel: boolean
 ): Promise<void> {
-  const unparsedSchemas = await parseFile(inputFile);
+  const parse = isModel ? parseModelFile : parseFile;
+  const unparsedSchemas = await parse(inputFile);
   const parsed: Record<string, JSONSchema> = unparsedSchemas.reduce(
     (acc, entry) => {
       const { name, content } = entry;

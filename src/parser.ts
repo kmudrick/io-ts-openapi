@@ -61,3 +61,15 @@ export async function parseFile(file: string): Promise<UnparsedSchemas> {
     content,
   }));
 }
+
+const capitalize = (s: string): string =>
+  `${s.charAt(0).toUpperCase()}${s.slice(1)}`;
+
+export async function parseModelFile(file: string): Promise<UnparsedSchemas> {
+  const contents = await fs.readFile(file, "utf8");
+  const yaml = YAML.parse(contents); // handles yaml or json
+  return Object.entries(yaml).map(([name, content]) => ({
+    name: capitalize(name),
+    content,
+  }));
+}
