@@ -16,11 +16,12 @@ Future enhancements will target support for refined types and alternate implemen
 npx @kmudrick/io-ts-openapi --help
 
 Options:
-  --help     Show help                                        [boolean]
-  --version  Show version number                              [boolean]
-  --input                                           [string] [required]
-  --output                                          [string] [required]
+  --help     Show help                                                 [boolean]
+  --version  Show version number                                       [boolean]
+  --input                                                    [string] [required]
+  --output                                                   [string] [required]
   --useJoda                                           [boolean] [default: false]
+  --isModel                                           [boolean] [default: false]
 ```
 
 ## Example
@@ -235,6 +236,11 @@ export const Error = t.readonly(
   "Error"
 );
 ```
+
+## JSON Schema Model Fragment Support
+
+Using the `--isModel` switch will cause the input to be parsed as a top level schema fragment.
+See [pet.yaml](./specs/pet.yaml) for an example.
 
 ## JS Joda Support
 
